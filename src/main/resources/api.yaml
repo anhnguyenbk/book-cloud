@@ -36,13 +36,41 @@ components:
     BookResponse:
       type: object
       properties:
-        name:
+        id:
+          type: integer
+          format: int32
+        title:
           type: string
         type:
           type: string
-        author:
+        description:
           type: string
+        authors:
+          type: array
+          items: {
+            "$ref": "#/components/schemas/AuthorResponse"
+          }
+        publishDate:
+          type: integer
+          format: int64
         createdAt:
+          type: integer
+          format: int64
+        updatedAt:
+          type: integer
+          format: int64
+
+    AuthorResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        firstName:
+          type: string
+        lastName:
+          type: string
+        birthDay:
           type: integer
           format: int64
 
