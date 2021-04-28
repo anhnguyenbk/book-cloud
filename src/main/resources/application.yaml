@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: 'jdbc:mysql://localhost:3308/book_cloud?createDatabaseIfNotExist=true&autoReconnect=true&allowPublicKeyRetrieval=true&useSSL=false'
+    username: root
+    password: 111111
+
+  liquibase:
+    changeLog: "classpath:db/changelog-master.yaml"
+    enabled: true

@@ -1,0 +1,68 @@
+openapi: 3.0.0
+info:
+  description: API specification for Book Cloud
+  version: v1
+  title: API specification for Book Cloud
+servers:
+  - url: http://localhost:8080/
+paths:
+  /books:
+    get:
+      tags:
+        - "book"
+      summary: Get all books
+      operationId: getBooks
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BooksResponse'
+        '500':
+          description: Unexpected technical errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+components:
+  schemas:
+    BooksResponse:
+      type: array
+      "items": {
+        "$ref": "#/components/schemas/BookResponse"
+      }
+    BookResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+        author:
+          type: string
+        createdAt:
+          type: integer
+          format: int64
+
+    ApiError:
+      type: object
+      properties:
+        faults:
+          type: array
+          items:
+            $ref: "#/components/schemas/Fault"
+    Fault:
+      type: object
+      properties:
+        message:
+          type: string
+        debugMessage:
+          type: string
+        externalMessage:
+          type: string
+        error:
+          type: string
+        code:
+          type: integer
