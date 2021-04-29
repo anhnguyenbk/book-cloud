@@ -25,6 +25,220 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiError'
+    post:
+      tags:
+        - "book"
+      summary: Create a book
+      operationId: createBook
+      requestBody:
+        description: BookEntity request
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/BookRequest'
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookResponse'
+        '500':
+          description: Unexpected technical errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /books/{bookId}:
+    get:
+      tags:
+        - "book"
+      summary: "Find book by ID"
+      operationId: "getBookById"
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookResponse'
+        "404":
+          description: "Book not found"
+    put:
+      tags:
+        - "book"
+      summary: "Update book by ID"
+      operationId: "updateBook"
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        description: BookEntity request
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/BookRequest'
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookResponse'
+        '500':
+          description: Unexpected technical errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+    delete:
+      tags:
+        - "book"
+      summary: "Delete book by ID"
+      operationId: "deleteBook"
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '204':
+          description: Successfully
+        '500':
+          description: Unexpected technical errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  /authors:
+    get:
+      tags:
+        - "author"
+      summary: Get all authors
+      operationId: getAuthors
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorsResponse'
+        '500':
+          description: Unexpected technical errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+    post:
+      tags:
+        - "author"
+      summary: Create a author
+      operationId: createAuthor
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/AuthorRequest'
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorResponse'
+        '500':
+          description: Unexpected technical errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /authors/{authorId}:
+    get:
+      tags:
+        - "author"
+      summary: "Find author by ID"
+      operationId: "getAuthorById"
+      parameters:
+        - name: authorId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorResponse'
+        "404":
+          description: "Author not found"
+    put:
+      tags:
+        - "author"
+      summary: "Update author by ID"
+      operationId: "updateAuthor"
+      parameters:
+        - name: authorId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/AuthorRequest'
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorResponse'
+        '500':
+          description: Unexpected technical errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+    delete:
+      tags:
+        - "author"
+      summary: "Delete author by ID"
+      operationId: "deleteAuthor"
+      parameters:
+        - name: authorId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '204':
+          description: Successfully
+        '500':
+          description: Unexpected technical errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
 
 components:
   schemas:
@@ -33,6 +247,7 @@ components:
       "items": {
         "$ref": "#/components/schemas/BookResponse"
       }
+
     BookResponse:
       type: object
       properties:
@@ -51,28 +266,57 @@ components:
             "$ref": "#/components/schemas/AuthorResponse"
           }
         publishDate:
-          type: integer
-          format: int64
+          type: string
+          format: date
         createdAt:
-          type: integer
-          format: int64
+          type: string
+          format: date-time
         updatedAt:
-          type: integer
-          format: int64
+          type: string
+          format: date-time
 
+    BookRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        type:
+          type: string
+        description:
+          type: string
+        authorIds:
+          type: array
+          items:
+            type: integer
+        publishDate:
+          type: string
+          format: date
+
+    AuthorsResponse:
+      type: array
+      "items": {
+        "$ref": "#/components/schemas/AuthorResponse"
+      }
     AuthorResponse:
       type: object
       properties:
         id:
           type: integer
           format: int32
-        firstName:
-          type: string
-        lastName:
+        name:
           type: string
         birthDay:
-          type: integer
-          format: int64
+          type: string
+          format: date
+
+    AuthorRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        birthDay:
+          type: string
+          format: date
 
     ApiError:
       type: object
@@ -90,7 +334,5 @@ components:
           type: string
         externalMessage:
           type: string
-        error:
-          type: string
-        code:
+        errorCode:
           type: integer

@@ -14,8 +14,7 @@ CREATE TABLE `book` (
 
 CREATE TABLE `author` (
     `id` INT NOT NULL AUTO_INCREMENT,
-    `first_name` VARCHAR (255) NOT NULL,
-    `last_name` VARCHAR (255) NOT NULL,
+    `name` VARCHAR (255) NOT NULL,
     `birth_day` DATETIME,
     `created_at` DATETIME NOT NULL,
     `updated_at` DATETIME NOT NULL,
