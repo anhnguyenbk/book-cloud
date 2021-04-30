@@ -2,8 +2,11 @@ package com.anhnguyen.bookcloud.service.impl;
 
 import com.anhnguyen.bookcloud.api.model.AuthorRequest;
 import com.anhnguyen.bookcloud.domain.Author;
+import com.anhnguyen.bookcloud.domain.Book;
+import com.anhnguyen.bookcloud.exception.BookExistingException;
 import com.anhnguyen.bookcloud.exception.EntityNotFoundException;
 import com.anhnguyen.bookcloud.repository.AuthorRepository;
+import com.anhnguyen.bookcloud.repository.BookRepository;
 import com.anhnguyen.bookcloud.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +23,9 @@ import java.util.List;
 public class AuthorServiceImpl implements AuthorService {
     @Autowired
     private AuthorRepository authorRepository;
+
+    @Autowired
+    private BookRepository bookRepository;
 
     @Override
     public List<Author> getAuthors() {
@@ -42,6 +48,11 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public void delete(Integer authorId) {
+        Author author = getById(authorId);
+        List<Book> authorBooks = bookRepository.findByAuthorsContaining(author);
+        if (!authorBooks.isEmpty()) {
+            throw new BookExistingException("Still has books references to author " + authorId);
+        }
         authorRepository.deleteById(authorId);
     }
 
