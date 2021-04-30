@@ -124,6 +124,37 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiError'
 
+  /books/search:
+    get:
+      tags:
+        - "book"
+      summary: Search books
+      operationId: searchBook
+      parameters:
+        - in: query
+          name: title
+          schema:
+            type: string
+          description: Book title
+        - in: query
+          name: author
+          schema:
+            type: string
+          description: Book author
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BooksResponse'
+        '500':
+          description: Unexpected technical errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
   /authors:
     get:
       tags:

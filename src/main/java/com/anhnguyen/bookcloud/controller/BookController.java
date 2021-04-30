@@ -5,6 +5,7 @@ import com.anhnguyen.bookcloud.api.model.BookRequest;
 import com.anhnguyen.bookcloud.api.model.BookResponse;
 import com.anhnguyen.bookcloud.domain.Book;
 import com.anhnguyen.bookcloud.mapper.BookMapper;
+import com.anhnguyen.bookcloud.model.BookSearchCriteria;
 import com.anhnguyen.bookcloud.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -34,6 +36,15 @@ public class BookController implements BooksApi {
     public ResponseEntity<List<BookResponse>> getBooks() {
         List<Book> books = bookService.getBooks();
         return ResponseEntity.ok(BookMapper.mapList(books));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<BookResponse>> searchBook(@RequestParam(value = "title", required = false) String title,
+                                                         @RequestParam(value = "author", required = false) String author) {
+        BookSearchCriteria criteria = new BookSearchCriteria(title, author);
+        List<Book> books = bookService.search(criteria);
+        return ResponseEntity.ok(BookMapper.mapList(books));
+
     }
 
     @PostMapping(value = {"", "/"})

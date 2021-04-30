@@ -5,6 +5,7 @@ import com.anhnguyen.bookcloud.api.model.BookRequest;
 import com.anhnguyen.bookcloud.domain.Author;
 import com.anhnguyen.bookcloud.domain.Book;
 import com.anhnguyen.bookcloud.domain.BookType;
+import com.anhnguyen.bookcloud.model.BookSearchCriteria;
 import com.anhnguyen.bookcloud.repository.AuthorRepository;
 import com.anhnguyen.bookcloud.repository.BookRepository;
 import org.junit.After;
@@ -162,5 +163,41 @@ public class BookServiceImplTest {
         assertThat(bookRepository.findAll().size()).isEqualTo(1);
         bookServiceImpl.delete(savedBook.getId());
         assertThat(bookRepository.findAll().size()).isEqualTo(0);
+    }
+
+    @Test
+    @Transactional
+    public void search() {
+        Author author = new Author();
+        author.setName("Yann Martel");
+        author.setBirthDay(LocalDate.of(1963, 6, 25));
+        author.setCreatedAt(LocalDateTime.now());
+        author.setUpdatedAt(LocalDateTime.now());
+        Author savedAuthor = authorRepository.save(author);
+
+        Book firstBook = new Book();
+        firstBook.setTitle("Life of Pi");
+        firstBook.setType(BookType.FICTION);
+        firstBook.setPublishDate(LocalDate.of(2001, 9, 11));
+        firstBook.setCreatedAt(LocalDateTime.now());
+        firstBook.setUpdatedAt(LocalDateTime.now());
+        firstBook.setAuthors(List.of(savedAuthor));
+        bookRepository.save(firstBook);
+
+        Book secondBook = new Book();
+        secondBook.setTitle("Beatrice and Virgil");
+        secondBook.setType(BookType.FICTION);
+        secondBook.setPublishDate(LocalDate.of(2010, 4, 6));
+        secondBook.setCreatedAt(LocalDateTime.now());
+        secondBook.setUpdatedAt(LocalDateTime.now());
+        secondBook.setAuthors(List.of(savedAuthor));
+        bookRepository.save(secondBook);
+
+        BookSearchCriteria criteria = new BookSearchCriteria();
+        criteria.setAuthor("Yann");
+        criteria.setTitle("Pi");
+
+        List<Book> result = bookServiceImpl.search(criteria);
+        assertThat(result.size()).isEqualTo(1);
     }
 }

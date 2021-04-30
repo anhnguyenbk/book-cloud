@@ -5,13 +5,23 @@ import com.anhnguyen.bookcloud.domain.Author;
 import com.anhnguyen.bookcloud.domain.Book;
 import com.anhnguyen.bookcloud.domain.BookType;
 import com.anhnguyen.bookcloud.exception.EntityNotFoundException;
+import com.anhnguyen.bookcloud.model.BookSearchCriteria;
 import com.anhnguyen.bookcloud.repository.AuthorRepository;
 import com.anhnguyen.bookcloud.repository.BookRepository;
 import com.anhnguyen.bookcloud.service.BookService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,8 +33,12 @@ import java.util.List;
 public class BookServiceImpl implements BookService {
     @Autowired
     private BookRepository bookRepository;
+
     @Autowired
     private AuthorRepository authorRepository;
+
+    @Autowired
+    private EntityManager entityManager;
 
     @Override
     public List<Book> getBooks() {
@@ -60,6 +74,29 @@ public class BookServiceImpl implements BookService {
         book.setPublishDate(request.getPublishDate());
         book.setAuthors(authors);
         return bookRepository.save(book);
+    }
+
+    @Override
+    public List<Book> search(BookSearchCriteria criteria) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Book> query = builder.createQuery(Book.class);
+        Root<Book> root = query.from(Book.class);
+
+        List<Predicate> predicateList = new ArrayList<>();
+        if (StringUtils.isNotBlank(criteria.getTitle())) {
+            Predicate titlePredicate = builder.like(root.get("title"), "%"+criteria.getTitle()+"%");
+            predicateList.add(titlePredicate);
+        }
+
+        if (StringUtils.isNotBlank(criteria.getAuthor())) {
+            Join join = root.join("authors", JoinType.LEFT);
+            Predicate authorPredicate = builder.like(join.get("name"), "%" + criteria.getAuthor() + "%");
+            predicateList.add(authorPredicate);
+        }
+
+        Predicate[] predicates = new Predicate[predicateList.size()];
+        predicateList.toArray(predicates);
+        return entityManager.createQuery(query.select(root).where(builder.and(predicates))).getResultList();
     }
 
     @Override
